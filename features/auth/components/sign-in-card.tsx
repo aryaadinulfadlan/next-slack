@@ -12,13 +12,14 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface Props {
   setAuthState: Dispatch<SetStateAction<AuthFlow>>;
 }
 
 export default function SignInCard({ setAuthState }: Props) {
-  // const { signIn } = useAuthActions();
+  const { signIn } = useAuthActions();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -26,7 +27,7 @@ export default function SignInCard({ setAuthState }: Props) {
   const handleChangeLoginInput = (key: string, value: string) =>
     setLoginInput((prev) => ({ ...prev, [key]: value }));
   const handleProviderSignIn = (value: "github" | "google") => {
-    //   signIn(value);
+    signIn(value);
   };
 
   return (
