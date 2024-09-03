@@ -18,16 +18,20 @@ interface Props {
   setAuthState: Dispatch<SetStateAction<AuthFlow>>;
 }
 
+// 430791876198-5eltt5nuh795983mddt294ckv8e0skqa.apps.googleusercontent.com
+// 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
 export default function SignInCard({ setAuthState }: Props) {
   const { signIn } = useAuthActions();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
   });
+  const [pending, setPending] = useState(false);
   const handleChangeLoginInput = (key: string, value: string) =>
     setLoginInput((prev) => ({ ...prev, [key]: value }));
   const handleProviderSignIn = (value: "github" | "google") => {
-    signIn(value);
+    setPending(true);
+    signIn(value).finally(() => setPending(false));
   };
 
   return (
@@ -41,7 +45,7 @@ export default function SignInCard({ setAuthState }: Props) {
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5">
           <Input
-            disabled={false}
+            disabled={pending}
             value={loginInput.email}
             onChange={(e) => handleChangeLoginInput("email", e.target.value)}
             placeholder="Email"
@@ -49,22 +53,22 @@ export default function SignInCard({ setAuthState }: Props) {
             required
           />
           <Input
-            disabled={false}
+            disabled={pending}
             value={loginInput.password}
             onChange={(e) => handleChangeLoginInput("password", e.target.value)}
             placeholder="Password"
             type="password"
             required
           />
-          <Button type="submit" className="w-full" size="lg" disabled={false}>
+          <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5">
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={pending}
+            onClick={() => handleProviderSignIn("google")}
             variant="outline"
             size="lg"
             className="w-full relative"
@@ -73,7 +77,7 @@ export default function SignInCard({ setAuthState }: Props) {
             Continue with Google
           </Button>
           <Button
-            disabled={false}
+            disabled={pending}
             onClick={() => handleProviderSignIn("github")}
             variant="outline"
             size="lg"
