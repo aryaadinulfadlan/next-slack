@@ -20,6 +20,7 @@ interface Props {
 }
 export default function SignUpCard({ setAuthState }: Props) {
   const [registerInput, setRegisterInput] = useState({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -42,6 +43,7 @@ export default function SignUpCard({ setAuthState }: Props) {
     }
     setPending(true);
     signIn("password", {
+      name: registerInput.name,
       email: registerInput.email,
       password: registerInput.password,
       flow: "signUp",
@@ -71,6 +73,13 @@ export default function SignUpCard({ setAuthState }: Props) {
       )}
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5" onSubmit={onCredentialSignUp}>
+          <Input
+            disabled={pending}
+            value={registerInput.name}
+            onChange={(e) => handleChangeRegisterInput("name", e.target.value)}
+            placeholder="Name"
+            required
+          />
           <Input
             disabled={pending}
             value={registerInput.email}
