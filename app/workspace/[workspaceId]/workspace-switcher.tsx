@@ -24,7 +24,7 @@ export default function WorkspaceSwitcher() {
   }); // single workspaces get by params id
   const otherWorkspaces = workspaces?.filter((el) => el._id !== workspaceId);
 
-  console.log({ otherWorkspaces });
+  // console.log({ otherWorkspaces });
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
