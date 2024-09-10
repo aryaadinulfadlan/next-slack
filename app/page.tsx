@@ -10,15 +10,15 @@ export default function Home() {
   const { replace } = useRouter();
   const [open, setOpen] = useCreateWorkspaceModal();
   const { data, isLoading } = useGetWorkspaces();
-  const workspaceId = data?.[0]?._id;
+  const firstWorkspaceID = data?.[0]?._id;
   useEffect(() => {
     if (isLoading) return;
-    if (workspaceId) {
-      replace(`/workspace/${workspaceId}`);
+    if (firstWorkspaceID) {
+      replace(`/workspace/${firstWorkspaceID}`);
     } else if (!open) {
       setOpen(true);
     }
-  }, [isLoading, workspaceId, open]);
+  }, [isLoading, firstWorkspaceID, open]);
 
   // console.log({ workspaceId, data });
   return (
