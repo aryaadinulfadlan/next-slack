@@ -24,14 +24,14 @@ export const getMembersByWorkspaceIdIncludeRelatedUser = query({
     if (!member) {
       return [];
     }
-    const data = await ctx.db
+    const membersByWorkspaceId = await ctx.db
       .query("members")
       .withIndex("by_workspace_id", (q) =>
         q.eq("workspaceId", args.workspaceId)
       )
       .collect();
     const members = [];
-    for (const member of data) {
+    for (const member of membersByWorkspaceId) {
       // const user = await populateUser(ctx, member.userId);
       const user = await ctx.db.get(member.userId);
       if (user) {
