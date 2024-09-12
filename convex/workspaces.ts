@@ -3,6 +3,28 @@ import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc } from "./_generated/dataModel";
 
+export const newJoinCode = mutation({
+  args: { workspaceId: v.id("workspaces") },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    // GOALS: CHECK MEMBERS DATA FIRST
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
+    if (!member || member.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+    await ctx.db.patch(args.workspaceId, { joinCode: generateCode() });
+    return args.workspaceId;
+  },
+});
+
 const generateCode = () => {
   const code = Array.from(
     { length: 6 },

@@ -19,14 +19,14 @@ import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 
 interface Props {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  preferencesOpen: boolean;
+  setPreferencesOpen: Dispatch<SetStateAction<boolean>>;
   initialValue: string;
 }
 
 export default function PreferencesModal({
-  open,
-  setOpen,
+  preferencesOpen,
+  setPreferencesOpen,
   initialValue,
 }: Props) {
   const workspaceId = useWorkspaceId();
@@ -77,7 +77,7 @@ export default function PreferencesModal({
   return (
     <>
       <ConfirmDialog />
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
         <DialogContent
           aria-describedby={undefined}
           className="p-0 bg-gray-300 overflow-hidden"

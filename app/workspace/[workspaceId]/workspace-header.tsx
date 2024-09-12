@@ -11,18 +11,26 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { ChevronDown, ListFilter, SquarePen } from "lucide-react";
 import PreferencesModal from "./preferences-modal";
 import { useState } from "react";
+import InviteModal from "./invite-modal";
 
 interface Props {
   workspace: Doc<"workspaces">;
   isAdmin: boolean;
 }
 export default function WorkspaceHeader({ workspace, isAdmin }: Props) {
-  const [open, setOpen] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   return (
     <>
+      <InviteModal
+        inviteOpen={inviteOpen}
+        setInviteOpen={setInviteOpen}
+        name={workspace.name}
+        joinCode={workspace.joinCode}
+      />
       <PreferencesModal
-        open={open}
-        setOpen={setOpen}
+        preferencesOpen={preferencesOpen}
+        setPreferencesOpen={setPreferencesOpen}
         initialValue={workspace.name}
       />
       <div className="flex items-center justify-between px-4 h-[49px] gap-0.5">
@@ -54,14 +62,14 @@ export default function WorkspaceHeader({ workspace, isAdmin }: Props) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer py-2"
-                  onClick={() => {}}
+                  onClick={() => setInviteOpen(true)}
                 >
                   Invite people to {workspace.name}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer py-2"
-                  onClick={() => setOpen(true)}
+                  onClick={() => setPreferencesOpen(true)}
                 >
                   Preferences
                 </DropdownMenuItem>
