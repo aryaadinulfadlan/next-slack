@@ -15,6 +15,8 @@ export const getMembersByWorkspaceIdIncludeRelatedUser = query({
       return [];
     }
     // CHECK TO MEMBER TABLE FIRST
+    // MEMBER HERE MEANS "MEMBER OF A WORKSPACE, NOT CHANNELS"
+    // DEFINITELY EXISTS, BECAUSE WHEN CREATE WORKSPACE, MEMBER IS AUTOMATICALLY INSERTED
     const member = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>

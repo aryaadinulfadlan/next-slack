@@ -49,7 +49,7 @@ export default function CreateChannelModal() {
   };
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Add a channel</DialogTitle>
         </DialogHeader>
