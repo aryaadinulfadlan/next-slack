@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-      <html lang="en">
+      <html lang={"en"}>
         <body className={inter.className}>
           <ConvexClientProvider>
             <JotaiClientProviders>
