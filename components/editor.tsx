@@ -14,6 +14,7 @@ import { ImageIcon, Smile } from "lucide-react";
 import Hint from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
+import EmojiPopover, { Emoji } from "./emoji-popover";
 
 interface EditorValue {
   image: File | null;
@@ -127,6 +128,15 @@ export default function Editor({
       toolbarElement.classList.toggle("hidden");
     }
   };
+  const onEmojiSelect = (emoji: Emoji) => {
+    // const quill = quillRef.current;
+    // quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
+    quillRef.current?.insertText(
+      quillRef.current.getSelection()?.index || 0,
+      emoji.native
+    );
+  };
+
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
   // console.log({ text: text.replace(/<(.|\n)*?>/g, "").trim(), isEmpty });
 
@@ -149,16 +159,11 @@ export default function Editor({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Emoji">
-            <Button
-              disabled={disabled}
-              size="iconSmall"
-              variant="ghost"
-              onClick={() => {}}
-            >
+          <EmojiPopover onEmojiSelect={onEmojiSelect}>
+            <Button disabled={disabled} size="iconSmall" variant="ghost">
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
           {variant === "create" && (
             <Hint label="Image">
               <Button
