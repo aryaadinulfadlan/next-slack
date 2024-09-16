@@ -1,12 +1,19 @@
 import Quill, { type QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
-import { MutableRefObject, useEffect, useLayoutEffect, useRef } from "react";
+import {
+  MutableRefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "./ui/button";
 import { PiTextAa } from "react-icons/pi";
 import { MdSend } from "react-icons/md";
 import { ImageIcon, Smile } from "lucide-react";
 import Hint from "./hint";
 import { Delta, Op } from "quill/core";
+import { cn } from "@/lib/utils";
 
 interface EditorValue {
   image: File | null;
@@ -30,6 +37,8 @@ export default function Editor({
   innerRef,
   variant = "create",
 }: Props) {
+  const [text, setText] = useState("");
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
   // TO AVOID ADDING THESE ITEMS TO THE EFFECT ARRAY'S DEPENDENCY (MAYBE)
   const submitRef = useRef(onSubmit);
   const placeholderRef = useRef(placeholder);
@@ -55,6 +64,31 @@ export default function Editor({
     const options: QuillOptions = {
       theme: "snow",
       placeholder: placeholderRef.current,
+      modules: {
+        toolbar: [
+          ["bold", "italic", "strike"],
+          ["link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+        keyboard: {
+          bindings: {
+            enter: {
+              key: "Enter",
+              handler: () => {
+                //submit form
+                return;
+              },
+            },
+            shift_enter: {
+              key: "Enter",
+              shiftKey: true,
+              handler: () => {
+                quill.insertText(quill.getSelection()?.index || 0, "\n");
+              },
+            },
+          },
+        },
+      },
     };
     const quill = new Quill(editorContainer, options);
     quillRef.current = quill;
@@ -64,31 +98,60 @@ export default function Editor({
       innerRef.current = quill;
     }
 
+    // APPENDING DEFAULT VALUE TO EDITOR IF EXISTS
+    quill.setContents(defaultValueRef.current);
+    setText(quill.getText());
+    // REFRESH THE TEXT STATE ON EVERY KEYSTROKE CHANGE
+    quill.on(Quill.events.TEXT_CHANGE, () => {
+      setText(quill.getText());
+    });
+
     return () => {
+      quill.off(Quill.events.TEXT_CHANGE);
       if (container) {
         container.innerHTML = "";
       }
+      if (quillRef.current) {
+        quillRef.current = null;
+      }
+      if (innerRef) {
+        innerRef.current = null;
+      }
     };
-  }, []);
+  }, [innerRef]);
 
+  const toggleToolbar = () => {
+    setIsToolbarVisible((prev) => !prev);
+    const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
+    if (toolbarElement) {
+      toolbarElement.classList.toggle("hidden");
+    }
+  };
+  const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+  // console.log({ text: text.replace(/<(.|\n)*?>/g, "").trim(), isEmpty });
+
+  // const isEmpty = text.trim().length === 0;
+  // console.log({ text, isEmpty });
   return (
     <div className="flex flex-col">
       <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
         <div ref={containerRef} className="h-full ql-custom" />
         <div className="flex px-2 pb-2 z-[5]">
-          <Hint label="Hide Formatting">
+          <Hint
+            label={isToolbarVisible ? "Hide Formatting" : "Show Formatting"}
+          >
             <Button
-              disabled={false}
+              disabled={disabled}
               size="iconSmall"
               variant="ghost"
-              onClick={() => {}}
+              onClick={toggleToolbar}
             >
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
           <Hint label="Emoji">
             <Button
-              disabled={false}
+              disabled={disabled}
               size="iconSmall"
               variant="ghost"
               onClick={() => {}}
@@ -99,7 +162,7 @@ export default function Editor({
           {variant === "create" && (
             <Hint label="Image">
               <Button
-                disabled={false}
+                disabled={disabled}
                 size="iconSmall"
                 variant="ghost"
                 onClick={() => {}}
@@ -114,7 +177,7 @@ export default function Editor({
                 variant="outline"
                 size="sm"
                 onClick={() => {}}
-                disabled={false}
+                disabled={disabled}
               >
                 Cancel
               </Button>
@@ -122,7 +185,7 @@ export default function Editor({
                 className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
                 size="sm"
                 onClick={() => {}}
-                disabled={false}
+                disabled={disabled || isEmpty}
               >
                 Save
               </Button>
@@ -130,21 +193,33 @@ export default function Editor({
           )}
           {variant === "create" && (
             <Button
-              disabled={false}
+              disabled={disabled || isEmpty}
               onClick={() => {}}
               size="iconSmall"
-              className="ml-auto bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+              className={cn(
+                "ml-auto",
+                isEmpty
+                  ? "bg-white hover:bg-white text-muted-foreground"
+                  : "bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
+              )}
             >
               <MdSend className="size-4" />
             </Button>
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+      {variant === "create" && (
+        <div
+          className={cn(
+            "p-2 text-[10px] text-muted-foreground flex justify-end opacity-0 transition",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
+      )}
     </div>
   );
 }
