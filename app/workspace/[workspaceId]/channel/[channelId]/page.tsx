@@ -5,12 +5,15 @@ import useChannelId from "@/hooks/use-channel-id";
 import { Loader, TriangleAlert } from "lucide-react";
 import ChannelHeader from "./header";
 import ChatInput from "./chat-input";
+import { useGetMessages } from "@/features/messages/api/use-get-messages";
 
 export default function ChannelIdPage() {
   const channelId = useChannelId();
   const { data: channel, isLoading: channelLoading } = useGetChannelById({
     channelId,
   });
+  const { results } = useGetMessages({ channelId });
+  console.log({ results });
 
   if (channelLoading) {
     return (
