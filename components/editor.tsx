@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import EmojiPopover, { Emoji } from "./emoji-popover";
 import Image from "next/image";
 
-interface EditorValue {
+export interface EditorValue {
   image: File | null;
   body: string;
 }
@@ -59,6 +59,30 @@ export default function Editor({
     disabledRef.current = disabled;
   });
 
+  const toggleToolbar = () => {
+    setIsToolbarVisible((prev) => !prev);
+    const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
+    if (toolbarElement) {
+      toolbarElement.classList.toggle("hidden");
+    }
+  };
+  const onEmojiSelect = (emoji: Emoji) => {
+    // const quill = quillRef.current;
+    // quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
+    quillRef.current?.insertText(
+      quillRef.current.getSelection()?.index || 0,
+      emoji.native
+    );
+  };
+
+  const handleSubmit = () => {
+    onSubmit({ body: JSON.stringify(quillRef.current?.getContents()), image });
+  };
+  const isEmpty = !image && text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+  // console.log({ text: text.replace(/<(.|\n)*?>/g, "").trim(), isEmpty });
+  // const isEmpty = text.trim().length === 0;
+  // console.log({ text, isEmpty });
+
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -79,8 +103,14 @@ export default function Editor({
             enter: {
               key: "Enter",
               handler: () => {
-                //submit form
-                return;
+                const text = quill.getText();
+                const addedImage = imageElementRef.current?.files?.[0] || null;
+                const isEmpty =
+                  !addedImage &&
+                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+                if (isEmpty) return;
+                const body = JSON.stringify(quill.getContents());
+                submitRef.current?.({ body, image: addedImage });
               },
             },
             shift_enter: {
@@ -123,28 +153,6 @@ export default function Editor({
       }
     };
   }, [innerRef]);
-
-  const toggleToolbar = () => {
-    setIsToolbarVisible((prev) => !prev);
-    const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
-    if (toolbarElement) {
-      toolbarElement.classList.toggle("hidden");
-    }
-  };
-  const onEmojiSelect = (emoji: Emoji) => {
-    // const quill = quillRef.current;
-    // quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
-    quillRef.current?.insertText(
-      quillRef.current.getSelection()?.index || 0,
-      emoji.native
-    );
-  };
-
-  const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
-  // console.log({ text: text.replace(/<(.|\n)*?>/g, "").trim(), isEmpty });
-
-  // const isEmpty = text.trim().length === 0;
-  // console.log({ text, isEmpty });
   return (
     <div className="flex flex-col">
       <input
@@ -154,7 +162,12 @@ export default function Editor({
         onChange={(e) => setImage(e.target.files![0])}
         className="hidden"
       />
-      <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
+      <div
+        className={cn(
+          "flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+          disabled && "opacity-45"
+        )}
+      >
         <div ref={containerRef} className="h-full ql-custom" />
         {!!image && (
           <div className="p-2">
@@ -216,7 +229,7 @@ export default function Editor({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {}}
+                onClick={onCancel}
                 disabled={disabled}
               >
                 Cancel
@@ -224,7 +237,7 @@ export default function Editor({
               <Button
                 className="bg-[#007a5a] hover:bg-[#007a5a]/80 text-white"
                 size="sm"
-                onClick={() => {}}
+                onClick={handleSubmit}
                 disabled={disabled || isEmpty}
               >
                 Save
@@ -234,7 +247,7 @@ export default function Editor({
           {variant === "create" && (
             <Button
               disabled={disabled || isEmpty}
-              onClick={() => {}}
+              onClick={handleSubmit}
               size="iconSmall"
               className={cn(
                 "ml-auto",
