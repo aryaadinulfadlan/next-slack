@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Hint from "./hint";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Thumbnail from "./thumbnail";
+import { Dispatch, SetStateAction } from "react";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const formatFullTime = (date: Date) => {
@@ -27,7 +28,7 @@ interface Props {
   updatedAt: Doc<"messages">["updatedAt"];
   isEditing: boolean;
   isCompact?: boolean;
-  setEditingId: (id: Id<"messages"> | null) => void;
+  setEditingId: Dispatch<SetStateAction<Id<"messages"> | null>>;
   hideThreadButton?: boolean;
   threadCount?: number;
   threadImage?: string;
