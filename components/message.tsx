@@ -5,6 +5,7 @@ import Hint from "./hint";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Thumbnail from "./thumbnail";
 import { Dispatch, SetStateAction } from "react";
+import Toolbar from "./toolbar";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const formatFullTime = (date: Date) => {
@@ -104,6 +105,17 @@ export default function Message({
           ) : null}
         </div>
       </div>
+      {!isEditing && (
+        <Toolbar
+          isAuthor={isAuthor}
+          isPending={false}
+          handleEdit={() => setEditingId(id)}
+          handleThread={() => {}}
+          handleDelete={() => {}}
+          hideThreadButton={hideThreadButton}
+          handleReaction={() => {}}
+        />
+      )}
     </div>
   );
 }
