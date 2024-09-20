@@ -8,13 +8,13 @@ import useWorkspaceId from "@/hooks/use-workspace-id";
 import useCurrentMember from "@/features/members/api/use-current-member";
 import { Loader } from "lucide-react";
 
-const formatDateLabel = (dateStr: string) => {
+export const formatDateLabel = (dateStr: string) => {
   const date = new Date(dateStr);
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
   return format(date, "EEEE, MMMM d");
 };
-const TIME_THRESHOLD = 5;
+export const TIME_THRESHOLD = 5;
 interface Props {
   memberName?: string;
   memberImage?: string;

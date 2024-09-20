@@ -13,7 +13,7 @@ const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 interface Props {
   placeholder: string;
 }
-interface createMessageValues {
+export interface CreateMessageValues {
   channelId: Id<"channels">;
   workspaceId: Id<"workspaces">;
   body: string;
@@ -34,7 +34,7 @@ export default function ChatInput({ placeholder }: Props) {
     try {
       setIsPending(true);
       editorRef.current?.enable(false);
-      const values: createMessageValues = {
+      const values: CreateMessageValues = {
         channelId,
         workspaceId,
         body,
