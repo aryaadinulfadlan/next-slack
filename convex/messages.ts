@@ -4,7 +4,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { Doc, Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 
-const getMember = async (
+export const getMember = async (
   ctx: QueryCtx,
   workspaceId: Id<"workspaces">,
   userId: Id<"users">
