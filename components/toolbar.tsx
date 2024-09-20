@@ -35,7 +35,12 @@ export default function Toolbar({
         </EmojiPopover>
         {!hideThreadButton && (
           <Hint label="Reply in thread">
-            <Button variant="ghost" size="iconSmall" disabled={isPending}>
+            <Button
+              variant="ghost"
+              size="iconSmall"
+              disabled={isPending}
+              onClick={handleThread}
+            >
               <MessageSquareText className="size-4" />
             </Button>
           </Hint>
@@ -43,12 +48,22 @@ export default function Toolbar({
         {isAuthor && (
           <>
             <Hint label="Edit Message">
-              <Button variant="ghost" size="iconSmall" disabled={isPending}>
+              <Button
+                variant="ghost"
+                size="iconSmall"
+                disabled={isPending}
+                onClick={handleEdit}
+              >
                 <Pencil className="size-4" />
               </Button>
             </Hint>
             <Hint label="Delete Message">
-              <Button variant="ghost" size="iconSmall" disabled={isPending}>
+              <Button
+                variant="ghost"
+                size="iconSmall"
+                disabled={isPending}
+                onClick={handleDelete}
+              >
                 <Trash className="size-4" />
               </Button>
             </Hint>
