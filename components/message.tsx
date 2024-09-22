@@ -68,7 +68,7 @@ export default function Message({
   threadName,
   threadTimestamp,
 }: Props) {
-  const { parentMessageId, onOpenMessage, onCloseMessage } = usePanel();
+  const { parentMessageId, onOpenMessage, onClose, onOpenProfile } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete Message",
     "Are you sure to delete this message?"
@@ -104,13 +104,13 @@ export default function Message({
         onSuccess() {
           toast.success("Message Deleted");
           if (parentMessageId === id) {
-            onCloseMessage();
+            onClose();
           }
         },
         onError() {
           toast.error("Failed to delete message");
           if (parentMessageId === id) {
-            onCloseMessage();
+            onClose();
           }
         },
       }
@@ -205,7 +205,7 @@ export default function Message({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar>
               <AvatarImage src={authorImage} />
               <AvatarFallback>{avatarFallback}</AvatarFallback>
@@ -225,7 +225,7 @@ export default function Message({
             <div className="flex flex-col w-full overflow-hidden">
               <div className="text-sm flex items-center gap-3">
                 <button
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)}
                   className="font-bold text-primary hover:underline"
                 >
                   {authorName}

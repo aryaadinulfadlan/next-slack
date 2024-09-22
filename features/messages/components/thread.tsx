@@ -22,12 +22,12 @@ const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 interface Props {
   messageId: Id<"messages">;
-  onCloseMessage: () => void;
+  onClose: () => void;
 }
 interface CreateMessageValuesThread extends CreateMessageValues {
   parentMessageId: Id<"messages">;
 }
-export default function Thread({ messageId, onCloseMessage }: Props) {
+export default function Thread({ messageId, onClose }: Props) {
   const channelId = useChannelId();
   const workspaceId = useWorkspaceId();
   const editorRef = useRef<Quill | null>(null);
@@ -105,7 +105,7 @@ export default function Thread({ messageId, onCloseMessage }: Props) {
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
           <p className="text-lg font-bold">Thread</p>
-          <Button onClick={onCloseMessage} size="iconSmall" variant="ghost">
+          <Button onClick={onClose} size="iconSmall" variant="ghost">
             <X className="size-5 stroke-[1.5]" />
           </Button>
         </div>
@@ -120,7 +120,7 @@ export default function Thread({ messageId, onCloseMessage }: Props) {
       <div className="h-full flex flex-col">
         <div className="h-[49px] flex justify-between items-center px-4 border-b">
           <p className="text-lg font-bold">Thread</p>
-          <Button onClick={onCloseMessage} size="iconSmall" variant="ghost">
+          <Button onClick={onClose} size="iconSmall" variant="ghost">
             <X className="size-5 stroke-[1.5]" />
           </Button>
         </div>
@@ -135,7 +135,7 @@ export default function Thread({ messageId, onCloseMessage }: Props) {
     <div className="h-full flex flex-col">
       <div className="h-[49px] flex justify-between items-center px-4 border-b">
         <p className="text-lg font-bold">Thread</p>
-        <Button onClick={onCloseMessage} size="iconSmall" variant="ghost">
+        <Button onClick={onClose} size="iconSmall" variant="ghost">
           <X className="size-5 stroke-[1.5]" />
         </Button>
       </div>
