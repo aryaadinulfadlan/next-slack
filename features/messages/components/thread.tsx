@@ -176,6 +176,7 @@ export default function Thread({ messageId, onCloseMessage }: Props) {
                   hideThreadButton
                   threadCount={message.threadCount}
                   threadImage={message.threadImage}
+                  threadName={message.threadName}
                   threadTimestamp={message.threadTimestamp}
                 />
               );
