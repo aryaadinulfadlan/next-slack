@@ -7,6 +7,39 @@ const populateUser = (ctx: QueryCtx, id: Id<"users">) => {
   return ctx.db.get(id);
 };
 
+export const getMemberById = query({
+  args: {
+    memberId: v.id("members"),
+  },
+  async handler(ctx, args) {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+    const member = await ctx.db.get(args.memberId);
+    if (!member) {
+      return null;
+    }
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+      )
+      .unique();
+    if (!currentMember) {
+      return null;
+    }
+    const user = await populateUser(ctx, member.userId);
+    if (!user) {
+      return null;
+    }
+    return {
+      ...member,
+      user,
+    };
+  },
+});
+
 export const getMembersByWorkspaceIdIncludeRelatedUser = query({
   args: { workspaceId: v.id("workspaces") },
   async handler(ctx, args) {
@@ -34,8 +67,7 @@ export const getMembersByWorkspaceIdIncludeRelatedUser = query({
       .collect();
     const members = [];
     for (const member of membersByWorkspaceId) {
-      // const user = await populateUser(ctx, member.userId);
-      const user = await ctx.db.get(member.userId);
+      const user = await populateUser(ctx, member.userId);
       if (user) {
         members.push({
           ...member,
