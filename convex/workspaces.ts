@@ -201,13 +201,42 @@ export const remove = mutation({
     if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
-    const [members] = await Promise.all([
-      ctx.db
-        .query("members")
-        .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
-        .collect(),
-    ]);
+    const [members, channels, conversations, messages, reactions] =
+      await Promise.all([
+        ctx.db
+          .query("members")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("channels")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("conversations")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("messages")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+        ctx.db
+          .query("reactions")
+          .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+          .collect(),
+      ]);
     for (const element of members) {
+      await ctx.db.delete(element._id);
+    }
+    for (const element of channels) {
+      await ctx.db.delete(element._id);
+    }
+    for (const element of conversations) {
+      await ctx.db.delete(element._id);
+    }
+    for (const element of messages) {
+      await ctx.db.delete(element._id);
+    }
+    for (const element of reactions) {
       await ctx.db.delete(element._id);
     }
     await ctx.db.delete(args.id);
